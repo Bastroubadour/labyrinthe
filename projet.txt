@@ -1,0 +1,118 @@
+Voici une **synthèse simple, claire et complète** de ton projet, Bastien — juste du texte, aucun code, pour poser le contexte global.
+
+---
+
+# 🟨 **SYNTHÈSE DE TON PROJET**
+
+Tu développes un **jeu en Unity** inspiré de l’esthétique et de la logique des **Backrooms**, mais avec ta propre identité.  
+L’objectif n’est pas un labyrinthe chaotique ou un générateur aléatoire classique :  
+tu veux un **espace cohérent, oppressant, répétitif, mais structuré**, avec une progression logique.
+
+---
+
+# 🟩 **1) Structure générale du monde**
+
+Ton monde repose sur un **“spine” principal**, une longue allée qui s’étend en ligne droite.  
+Ce spine sert de colonne vertébrale au niveau, comme dans *The Exit 8* ou certains niveaux des Backrooms.
+
+Le joueur avance dans :
+
+- de **longs couloirs rectilignes**,  
+- ponctués de **rooms ordonnées** (Small, Medium, Large, Liminal…),  
+- avec une ambiance monotone, industrielle, jaune, éclairée au néon.
+
+Tu veux éviter :
+
+- les culs‑de‑sac inutiles,  
+- les salles placées au hasard,  
+- les labyrinthes illogiques.
+
+Ton but : **un espace qui semble logique, mais qui dérange subtilement**.
+
+---
+
+# 🟧 **2) Les rooms**
+
+Tu as plusieurs types de rooms :
+
+- **Small**  
+- **Medium**  
+- **Large**  
+- **Liminal**  
+- **Open Area**
+
+Chaque room est un **prefab** avec ses propres dimensions.  
+Elles doivent s’aligner parfaitement avec les corridors, sans overlap, sans trous, sans cubes parasites.
+
+Tu veux que les rooms apparaissent selon un **pattern ordonné**, pas au hasard.  
+Exemple : tous les 3 segments une Medium, tous les 5 une Large, etc.
+
+---
+
+# 🟦 **3) Les corridors**
+
+Les corridors sont les éléments principaux du niveau.  
+Ils sont :
+
+- réguliers,  
+- répétitifs,  
+- alignés,  
+- espacés d’une distance constante.
+
+Ils créent la sensation d’un espace **infini**, monotone, hypnotique — typique des Backrooms.
+
+---
+
+# 🟩 **4) Les anomalies (à ajouter plus tard)**
+
+Tu prévois d’ajouter plus tard des **anomalies** :
+
+- objets déplacés,  
+- salles dupliquées,  
+- lumières étranges,  
+- proportions impossibles,  
+- comportements anormaux.
+
+Mais **pas maintenant** : tu veux d’abord stabiliser la structure du labyrinthe.
+
+---
+
+# 🟨 **5) Le générateur**
+
+Tu veux un **générateur procédural complet**, qui :
+
+- avance segment par segment,  
+- place un corridor,  
+- décide si une room doit être ajoutée,  
+- garde une cohérence visuelle,  
+- évite les overlaps,  
+- reste fidèle à l’esprit Backrooms.
+
+Le générateur doit produire un espace :
+
+- **ordonné**,  
+- **fluide**,  
+- **sans pop visuel**,  
+- **sans destruction/recréation brutale**,  
+- **sans chaos**.
+
+---
+
+# 🟩 **6) L’objectif final**
+
+Créer un **labyrinthe Backrooms-like professionnel**, avec :
+
+- des transitions propres,  
+- des rooms cohérentes,  
+- une ambiance oppressante,  
+- une structure logique,  
+- une progression subtile,  
+- et plus tard, des anomalies maîtrisées.
+
+Tu veux un système **fiable**, **propre**, **optimisé**, qui te permet ensuite d’ajouter :
+
+- l’ambiance,  
+- les anomalies,  
+- les interactions,  
+- les événements,  
+- les mécaniques de gameplay.
