@@ -5,12 +5,20 @@ public class ChunkGenerator : MonoBehaviour
     public RoomFactory roomFactory;
     public CorridorFactory corridorFactory;
 
-    [Header("Taille du chunk")]
-    public int segmentCount = 10;     // nombre de segments de corridor dans ce chunk
-    public float segmentSpacing = 10f; // distance entre chaque segment de corridor
+    [Header("Corridor")]
+    public int segmentCount = 10;
+    public float segmentSpacing = 10f;
 
-    [Header("Rooms latérales")]
-    [Range(0f, 1f)] public float sideRoomChance = 0.5f; // probabilité de room de chaque côté
+    [Header("Rooms connectées")]
+    public float lateralZ = 8f;   // distance du centre vers chaque room
+
+    [Header("Murs entre les rooms")]
+    public GameObject sideWallPrefab;
+    public float corridorHalfWidth = 3f;
+    public float wallThickness = 0.3f;
+    public float wallHeight = 2f;
+
+    public float roomSpacing => segmentSpacing;
 
     public GameObject GenerateChunk(Vector2Int chunkPos, int seed)
     {
@@ -20,46 +28,52 @@ public class ChunkGenerator : MonoBehaviour
         chunk.transform.position = new Vector3(
             chunkPos.x * segmentCount * segmentSpacing,
             0,
-            chunkPos.y * 0f // on reste sur un seul axe pour le corridor principal
+            0
         );
 
-        // Position de départ du corridor principal (axe X)
         Vector3 basePos = chunk.transform.position;
 
         for (int i = 0; i < segmentCount; i++)
         {
             Vector3 corridorPos = basePos + new Vector3(i * segmentSpacing, 0, 0);
 
-            // 1) Segment de corridor principal
+            // 1) Sol du couloir
             corridorFactory.CreateCorridor(corridorPos, chunk.transform);
 
-            // 2) Rooms latérales (haut/bas = Nord/Sud)
-            // Room au "Nord" (au-dessus du corridor, +Z)
-            if (Random.value < sideRoomChance)
-            {
-                Vector3 roomPosNorth = corridorPos + new Vector3(0, 0, segmentSpacing);
-                roomFactory.SpawnRoom(
-                    roomPosNorth,
-                    chunk.transform,
-                    openNorth: false,
-                    openSouth: true,  // ouverture vers le corridor
-                    openEast: false,
-                    openWest: false
-                );
-            }
+            // 2) Rooms (toujours)
+            Vector3 leftRoomPos = corridorPos + new Vector3(0, 0, lateralZ);
+            roomFactory.SpawnRoom(
+                leftRoomPos,
+                chunk.transform,
+                openNorth: false,
+                openSouth: true,
+                openEast: false,
+                openWest: false
+            );
 
-            // Room au "Sud" (en-dessous du corridor, -Z)
-            if (Random.value < sideRoomChance)
+            Vector3 rightRoomPos = corridorPos + new Vector3(0, 0, -lateralZ);
+            roomFactory.SpawnRoom(
+                rightRoomPos,
+                chunk.transform,
+                openNorth: true,
+                openSouth: false,
+                openEast: false,
+                openWest: false
+            );
+
+            // 3) MURS ENTRE LES ROOMS (pas sur les rooms)
+            // On place le mur ENTRE ce segment et le suivant
+            if (i < segmentCount - 1)
             {
-                Vector3 roomPosSouth = corridorPos + new Vector3(0, 0, -segmentSpacing);
-                roomFactory.SpawnRoom(
-                    roomPosSouth,
-                    chunk.transform,
-                    openNorth: true,  // ouverture vers le corridor
-                    openSouth: false,
-                    openEast: false,
-                    openWest: false
-                );
+                float wallZ = corridorHalfWidth;
+
+                // Mur gauche
+                Vector3 leftWallPos = corridorPos + new Vector3(segmentSpacing / 2f, wallHeight / 2f, wallZ);
+                Instantiate(sideWallPrefab, leftWallPos, Quaternion.identity, chunk.transform);
+
+                // Mur droit
+                Vector3 rightWallPos = corridorPos + new Vector3(segmentSpacing / 2f, wallHeight / 2f, -wallZ);
+                Instantiate(sideWallPrefab, rightWallPos, Quaternion.identity, chunk.transform);
             }
         }
 
