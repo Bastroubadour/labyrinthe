@@ -6,46 +6,41 @@ public class ChunkManager : MonoBehaviour
     public Transform player;
     public ChunkGenerator chunkGenerator;
 
-    public int renderDistance = 2;
+    public int renderDistance = 2;      // nombre de chunks devant et derrière
     public float destroyBehindAngle = 150f;
 
-    private Dictionary<Vector2Int, GameObject> visibleChunks = new Dictionary<Vector2Int, GameObject>();
-    private Dictionary<Vector2Int, GameObject> frozenChunks = new Dictionary<Vector2Int, GameObject>();
+    private Dictionary<int, GameObject> visibleChunks = new Dictionary<int, GameObject>();
+    private Dictionary<int, GameObject> frozenChunks = new Dictionary<int, GameObject>();
 
     void Update()
     {
-        Vector2Int playerChunk = GetPlayerChunk();
+        int playerChunk = GetPlayerChunk();
 
-        // 1) On calcule la liste des chunks qui DOIVENT être visibles
-        HashSet<Vector2Int> mustBeVisible = new HashSet<Vector2Int>();
+        // 1) Liste des chunks qui doivent être visibles
+        HashSet<int> mustBeVisible = new HashSet<int>();
 
-        for (int x = -renderDistance; x <= renderDistance; x++)
+        for (int offset = -renderDistance; offset <= renderDistance; offset++)
         {
-            for (int y = -renderDistance; y <= renderDistance; y++)
+            int coord = playerChunk + offset;
+
+            // Chunk du joueur → toujours visible
+            if (coord == playerChunk)
             {
-                Vector2Int coord = new Vector2Int(playerChunk.x + x, playerChunk.y + y);
-
-                // Le chunk du joueur doit toujours être visible
-                if (coord == playerChunk)
-                {
-                    mustBeVisible.Add(coord);
-                    continue;
-                }
-
-                // Chunk devant toi → doit être visible
-                if (!IsChunkBehindPlayer(coord))
-                    mustBeVisible.Add(coord);
+                mustBeVisible.Add(coord);
+                continue;
             }
+
+            // Chunk devant le joueur → visible
+            if (!IsChunkBehindPlayer(coord))
+                mustBeVisible.Add(coord);
         }
 
-        // 2) RÈGLE B : Tant qu’un chunk est visible → on NE LE CHANGE PAS
-        foreach (var coord in mustBeVisible)
+        // 2) Activation ou création des chunks nécessaires
+        foreach (int coord in mustBeVisible)
         {
-            // Déjà visible → on ne touche pas
             if (visibleChunks.ContainsKey(coord))
                 continue;
 
-            // Était gelé → on l'active
             if (frozenChunks.ContainsKey(coord))
             {
                 GameObject chunk = frozenChunks[coord];
@@ -55,55 +50,51 @@ public class ChunkManager : MonoBehaviour
                 continue;
             }
 
-            // Nouveau chunk → seed aléatoire
             int seed = Random.Range(int.MinValue, int.MaxValue);
-            GameObject newChunk = chunkGenerator.GenerateChunk(coord, seed);
+            GameObject newChunk = chunkGenerator.GenerateChunk(new Vector2Int(coord, 0), seed);
             visibleChunks.Add(coord, newChunk);
         }
 
-        // 3) Tous les chunks NON visibles → détruits → recréés → gelés
-        List<Vector2Int> toFreeze = new List<Vector2Int>();
+        // 3) Geler les chunks non visibles
+        List<int> toFreeze = new List<int>();
 
         foreach (var kvp in visibleChunks)
         {
-            Vector2Int coord = kvp.Key;
+            int coord = kvp.Key;
 
             if (!mustBeVisible.Contains(coord))
                 toFreeze.Add(coord);
         }
 
-        foreach (var coord in toFreeze)
+        foreach (int coord in toFreeze)
         {
             GameObject oldChunk = visibleChunks[coord];
             visibleChunks.Remove(coord);
             Destroy(oldChunk);
 
             int seed = Random.Range(int.MinValue, int.MaxValue);
-            GameObject frozen = chunkGenerator.GenerateChunk(coord, seed);
+            GameObject frozen = chunkGenerator.GenerateChunk(new Vector2Int(coord, 0), seed);
             frozen.SetActive(false);
 
             frozenChunks[coord] = frozen;
         }
     }
 
-    bool IsChunkBehindPlayer(Vector2Int chunkCoord)
+    bool IsChunkBehindPlayer(int chunkCoord)
     {
-        Vector3 chunkWorldPos = new Vector3(
-            chunkCoord.x * chunkGenerator.chunkSize * chunkGenerator.roomSpacing,
-            0,
-            chunkCoord.y * chunkGenerator.chunkSize * chunkGenerator.roomSpacing
-        );
+        float chunkWorldX = chunkCoord * chunkGenerator.segmentCount * chunkGenerator.roomSpacing;
 
+        Vector3 chunkWorldPos = new Vector3(chunkWorldX, 0, 0);
         Vector3 toChunk = chunkWorldPos - player.position;
+
         float angle = Vector3.Angle(player.forward, toChunk);
 
         return angle > destroyBehindAngle;
     }
 
-    Vector2Int GetPlayerChunk()
+    int GetPlayerChunk()
     {
-        int cx = Mathf.FloorToInt(player.position.x / (chunkGenerator.chunkSize * chunkGenerator.roomSpacing));
-        int cy = Mathf.FloorToInt(player.position.z / (chunkGenerator.chunkSize * chunkGenerator.roomSpacing));
-        return new Vector2Int(cx, cy);
+        float chunkLength = chunkGenerator.segmentCount * chunkGenerator.roomSpacing;
+        return Mathf.FloorToInt(player.position.x / chunkLength);
     }
 }

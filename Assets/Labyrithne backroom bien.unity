@@ -436,7 +436,7 @@ Transform:
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 10, z: 0}
+  m_LocalPosition: {x: 0, y: 1.6, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1200,7 +1200,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6d778d0221c5eb047a7af7ea9c73cf03, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CorridorFactory
-  corridorPrefab: {fileID: 4254403773250396219, guid: 202c5edf58d7f32499c21d606b9be983, type: 3}
+  corridorPrefab: {fileID: 1716625554797967546, guid: e423010e4e3a3ca429e612629baea7af, type: 3}
 --- !u!4 &661688570
 Transform:
   m_ObjectHideFlags: 0
@@ -2008,8 +2008,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ChunkGenerator
   roomFactory: {fileID: 1938322780}
   corridorFactory: {fileID: 661688569}
-  chunkSize: 1
-  roomSpacing: 10
+  segmentCount: 10
+  segmentSpacing: 20
+  corridorHalfWidth: 15
+  roomHalfWidth: 5
+  lateralZ: 20
+  sideWallPrefab: {fileID: 7481423484005676980, guid: b6c2440576e07be4381c5a1fc8f9bda1, type: 3}
+  wallHeight: 3
+  wallThickness: 0.3
+  polePrefab: {fileID: 216372148936895193, guid: 33283186f2310a242b65272c14d05330, type: 3}
+  poleAnomalyPrefab: {fileID: 1526322643937767864, guid: f4be50700f77a6d488edbcec9ea0af31, type: 3}
+  poleChance: 1
+  anomalyChance: 0.03
+  poleOffsetFromWall: 5
+  poleSpacing: 6
 --- !u!4 &1145361428
 Transform:
   m_ObjectHideFlags: 0
@@ -2641,11 +2653,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e13f23ce10071aa46a8007dc6fe65ed4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BackroomsGenerator
-  roomPrefab: {fileID: 2417537116387172549, guid: 6a70a48deb9b2d449bc555693b1ed998, type: 3}
-  corridorPrefab: {fileID: 3895401491523769411, guid: cdd9946adedf03e469a1409e02ffb4e7, type: 3}
-  width: 10
-  height: 10
-  roomSize: 10
 --- !u!1 &1381690914
 GameObject:
   m_ObjectHideFlags: 0
@@ -3332,15 +3339,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RoomFactory
   rooms:
   - prefab: {fileID: 5336578788192660914, guid: a72d062841a182c45a9a94f6100431d3, type: 3}
-    weight: 10
+    weight: 0
   - prefab: {fileID: 1828724015921044437, guid: 8a4407001dc251e4baf6edb5e94547e4, type: 3}
-    weight: 5
+    weight: 0
   - prefab: {fileID: 876298660715731256, guid: 70cf70add53de274b91a331656d5b38a, type: 3}
-    weight: 50
+    weight: 100
   - prefab: {fileID: 1348001241976287521, guid: 31f406769b7485d4685a7094fb3d70df, type: 3}
-    weight: 5
+    weight: 0
   - prefab: {fileID: 4841043136210792000, guid: fb7e37f078dc6b648bf4998f97a472aa, type: 3}
-    weight: 30
+    weight: 0
 --- !u!4 &1938322781
 Transform:
   m_ObjectHideFlags: 0
@@ -3640,8 +3647,8 @@ SceneRoots:
   - {fileID: 661688570}
   - {fileID: 1145361428}
   - {fileID: 1938322781}
-  - {fileID: 1465800006}
   - {fileID: 1525630509}
+  - {fileID: 1465800006}
   - {fileID: 7655994002291527831}
   - {fileID: 1809161512}
   - {fileID: 333371700}
